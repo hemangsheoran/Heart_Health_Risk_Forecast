@@ -33,6 +33,23 @@ xgmodel.load_model('xgboost_model.json')
 
 logistic_model = joblib.load('logistic_regression_model.pkl')
 
+
+# Branch 2
+#first hybrid
+loaded_rf_1_1 = joblib.load('random_forest_1_1.pkl')
+loaded_lr_1_2 = joblib.load('logistic_regression_1_2.pkl')
+
+#second hybrid
+loaded_dt_2_1 = joblib.load('decision_tree_2_1.pkl')
+loaded_lr_2_2 = joblib.load('logistic_regression_2_2.pkl')
+
+
+
+
+
+
+
+
 app = Flask(__name__)
 
 
@@ -136,7 +153,30 @@ def predict():
         accuracy = (final/7)*100
 
 
-        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0])
+
+
+        #Second Branch
+
+        # Load Logistic Regression model
+        print(x_test)
+        predictions = loaded_rf_1_1.predict(x_test)
+        x_test1 = x_test.copy()
+        x_test1['rf_predictions'] = predictions
+        lr_predictions_first = loaded_lr_1_2.predict(x_test1)
+
+
+        #second
+        print(x_test)
+        predictions1 = loaded_dt_2_1.predict(x_test)
+        x_test2 = x_test.copy()
+        x_test2['second_predictions'] = predictions1
+        predictions_second = loaded_lr_2_2.predict(x_test2)
+
+
+
+
+
+        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150])
 
 
 if __name__ == '__main__':
