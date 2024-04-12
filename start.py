@@ -1,6 +1,11 @@
 # Importing essential libraries
 import pandas as pd
 import joblib
+
+
+
+
+
 from flask import Flask, render_template, request
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -8,6 +13,8 @@ from sklearn.preprocessing import StandardScaler
 from joblib import load
 from xgboost import XGBClassifier
 scaler = StandardScaler()
+
+
 
 svm_2_layer = load('2_layer_svm.pkl')
 cnn_2_layer = load_model('2_layer_cnn.keras')
@@ -44,6 +51,9 @@ loaded_dt_2_1 = joblib.load('decision_tree_2_1.pkl')
 loaded_lr_2_2 = joblib.load('logistic_regression_2_2.pkl')
 
 
+#cnn_logistic
+cnn_logistic = load_model('cnn_logistic.keras')
+loaded_cnn_lr = joblib.load('cnn_logistic_regression.pkl')
 
 
 
@@ -174,9 +184,15 @@ def predict():
 
 
 
+        #cnn_logistic_regression
+        cnn_logistic1 = cnn_logistic.predict(user_input_scaled)
+        predictions_cnn_logistic = loaded_cnn_lr.predict(cnn_logistic1)
 
 
-        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150])
+
+
+
+        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150], cnn_logisticregr = predictions_cnn_logistic[150])
 
 
 if __name__ == '__main__':
