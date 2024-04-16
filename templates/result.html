@@ -137,6 +137,16 @@ box-sizing: border-box; ">
 			{% endif %}
 
 
+			{% if lightgbm_catboo==1 %}
+				<h3>The result of LightGBM+CATBOOST hybrid model is: <span class='danger'>Disease Found</span></h3>
+
+			{% elif lightgbm_catboo==0 %}
+				<h3>The result of LightGBM+CATBOOST hybrid model is <span class='safe'>Disease not Found</span></h3>
+
+			{% endif %}
+
+
+
 				</div>
 			</div>
 			<br>

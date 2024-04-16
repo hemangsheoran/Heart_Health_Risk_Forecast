@@ -1,7 +1,8 @@
 # Importing essential libraries
 import pandas as pd
 import joblib
-
+import lightgbm as lgb
+from catboost import CatBoostClassifier
 
 
 
@@ -55,9 +56,10 @@ loaded_lr_2_2 = joblib.load('logistic_regression_2_2.pkl')
 cnn_logistic = load_model('cnn_logistic.keras')
 loaded_cnn_lr = joblib.load('cnn_logistic_regression.pkl')
 
-
-
-
+#Lightgbm_catboost
+lightgbm_catboost_loaded = lgb.Booster(model_file='lightgbm_catboost.txt')
+catboost_lightgbm_loaded = CatBoostClassifier()
+catboost_lightgbm_loaded.load_model('catboost_lightgbm')
 
 
 app = Flask(__name__)
@@ -92,6 +94,7 @@ def predict():
                    'Oldpeak', 'ST_Slope']
         pddata = pd.DataFrame(data, columns=columns)
 
+
         pd1data = pddata.astype({
             'Age': np.int64,
             'Sex': np.int64,
@@ -106,7 +109,9 @@ def predict():
             'ST_Slope': np.int64
         })
         x_test = pd.read_csv('x_test.csv')
+        #x_train = pd.read_csv('x_train.csv')
         #x_test.info()
+        x_test_lightgbm = pd.concat([x_test, pd1data], ignore_index=True)
         x_test = pd.concat([x_test, pddata], ignore_index=True)
         #x_test.info()
         #print(pd1data)
@@ -188,11 +193,30 @@ def predict():
         cnn_logistic1 = cnn_logistic.predict(user_input_scaled)
         predictions_cnn_logistic = loaded_cnn_lr.predict(cnn_logistic1)
 
+        # Lightgbm_catboost
+        y_pred = lightgbm_catboost_loaded.predict(x_test_lightgbm, num_iteration=lightgbm_catboost_loaded.best_iteration)
+        cattest = pd.DataFrame({'Lightgbm': y_pred})
+        y_predset = catboost_lightgbm_loaded.predict(cattest)
+        print("First Branch----------")
+        print("Layer 2 result", result_2_layer[150])
+        print("Layer 4 result", result_4_layer[150])
+        print("Layer 8 result", result_8_layer[150])
+        print("Layer 16 result", result_16_layer[150])
+        print("Layer 24 result", result_24_layer[150])
+        print("Xgboost result", y_pred[0])
+        print("Logistic Regression result", predictions_logistic[0])
+        print("Second Branch---------")
+
+        print("Random Forest + Logistic Regression", lr_predictions_first[150])
+        print("Decision Tree + Logistic Regression", predictions_second[150])
+        print("CNN + Logistic Regression", predictions_cnn_logistic[150])
+        print("LightGBM + Catboost", y_predset[150])
+        
 
 
 
 
-        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150], cnn_logisticregr = predictions_cnn_logistic[150])
+        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150], cnn_logisticregr = predictions_cnn_logistic[150], lightgbm_catboo = y_predset[150] )
 
 
 if __name__ == '__main__':
