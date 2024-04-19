@@ -146,6 +146,15 @@ box-sizing: border-box; ">
 			{% endif %}
 
 
+			{% if naive_bayes==1 %}
+				<h3>The result of LightGBM+ naive_bayes hybrid model is: <span class='danger'>Disease Found</span></h3>
+
+			{% elif naive_bayes==0 %}
+				<h3>The result of LightGBM+ naive_bayes hybrid model is <span class='safe'>Disease not Found</span></h3>
+
+			{% endif %}
+
+
 
 				</div>
 			</div>

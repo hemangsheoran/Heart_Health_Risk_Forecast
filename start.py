@@ -4,7 +4,7 @@ import joblib
 import lightgbm as lgb
 from catboost import CatBoostClassifier
 
-
+import pickle
 
 
 from flask import Flask, render_template, request
@@ -60,6 +60,11 @@ loaded_cnn_lr = joblib.load('cnn_logistic_regression.pkl')
 lightgbm_catboost_loaded = lgb.Booster(model_file='lightgbm_catboost.txt')
 catboost_lightgbm_loaded = CatBoostClassifier()
 catboost_lightgbm_loaded.load_model('catboost_lightgbm')
+
+
+#lightgbm_naivebyes
+with open("naive_bayes_lightGBM.pkl", "rb") as f:
+    loaded_naive = pickle.load(f)
 
 
 app = Flask(__name__)
@@ -145,6 +150,7 @@ def predict():
 
         y_pred = xgmodel.predict(pd1data)
         print(y_pred)
+
         svm_model_test_predictions.append(y_pred)
         predictions_logistic = logistic_model.predict(pd1data)
         print(predictions_logistic)
@@ -158,14 +164,7 @@ def predict():
         final_result = svm_final.predict(cnn_predictions_test)
         print(final_result[0])
 
-        final = result_2_layer[150]+result_4_layer[150]+result_8_layer[150]+result_16_layer[150]+result_24_layer[150]+y_pred[0]+predictions_logistic[0]
 
-        # if final >= 4:
-        #     result = 2
-        # else:
-        #     result = 0
-
-        accuracy = (final/7)*100
 
 
 
@@ -194,9 +193,24 @@ def predict():
         predictions_cnn_logistic = loaded_cnn_lr.predict(cnn_logistic1)
 
         # Lightgbm_catboost
-        y_pred = lightgbm_catboost_loaded.predict(x_test_lightgbm, num_iteration=lightgbm_catboost_loaded.best_iteration)
-        cattest = pd.DataFrame({'Lightgbm': y_pred})
-        y_predset = catboost_lightgbm_loaded.predict(cattest)
+        y_preds = lightgbm_catboost_loaded.predict(x_test_lightgbm, num_iteration=lightgbm_catboost_loaded.best_iteration)
+        cattest1 = pd.DataFrame({'Lightgbm': y_preds})
+        y_predset = catboost_lightgbm_loaded.predict(cattest1)
+
+
+
+        #lIGHTGBM_naive
+        y_predst = lightgbm_catboost_loaded.predict(x_test_lightgbm, num_iteration=lightgbm_catboost_loaded.best_iteration)
+        cattest2 = pd.DataFrame({'Lightgbm': y_predst})
+        naive_result = loaded_naive.predict(cattest2)
+
+        final = result_2_layer[150] + result_4_layer[150] + result_8_layer[150] + result_16_layer[150] + result_24_layer[150] + y_pred[0] + predictions_logistic[0]
+
+
+
+        accuracy = (final / 7) * 100
+
+
         print("First Branch----------")
         print("Layer 2 result", result_2_layer[150])
         print("Layer 4 result", result_4_layer[150])
@@ -205,18 +219,21 @@ def predict():
         print("Layer 24 result", result_24_layer[150])
         print("Xgboost result", y_pred[0])
         print("Logistic Regression result", predictions_logistic[0])
+
+
         print("Second Branch---------")
 
         print("Random Forest + Logistic Regression", lr_predictions_first[150])
         print("Decision Tree + Logistic Regression", predictions_second[150])
         print("CNN + Logistic Regression", predictions_cnn_logistic[150])
         print("LightGBM + Catboost", y_predset[150])
+        print("LightGBM + Naive_bayes", naive_result[150])
         
 
 
 
 
-        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150], cnn_logisticregr = predictions_cnn_logistic[150], lightgbm_catboo = y_predset[150] )
+        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150], cnn_logisticregr = predictions_cnn_logistic[150], lightgbm_catboo = y_predset[150], naive_bayes = naive_result[150] )
 
 
 if __name__ == '__main__':
