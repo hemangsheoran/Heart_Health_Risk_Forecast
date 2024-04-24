@@ -9,6 +9,116 @@
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 		<script src="https://kit.fontawesome.com/5f3f547070.js" crossorigin="anonymous"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+		<style>
+
+			.bod {
+                display: flex;
+                 justify-content: center; /* Horizontally center the content */
+                  align-items: center; /* Vertically center the content */
+                  height: 10vh; /* Ensure full viewport height */
+                  margin: 0; /* Remove default margin */
+          }
+
+
+
+
+
+
+			.datarow{
+
+
+                 background-color: #f0f0f0;
+                 border: 2px solid #ccc;
+                 border-radius: 10px;
+                 display: inline-block;
+                 padding: 10px;
+                justify-content: center;
+                align-items: center;
+
+
+                color: #333;
+                  text-transform: uppercase;
+                   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+			}
+
+			.text {
+               text-align: center;
+                      }
+
+			.branchname{
+
+
+
+			}
+			.firstbranch{
+
+
+
+			}
+			.secondbranch{
+
+
+
+			}
+
+            .row {
+               display: flex;
+               justify-content: space-between; /* or any other flexbox property you need */
+              }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			.lastlayer{
+			display: flex;
+            justify-content: space-between;
+
+			}
+
+
+			.lastlayer div {
+			width: 30%;
+			background-color: #daf3f5;
+			margin: 0 auto;
+			border: 2px dashed #000;
+			border-radius: 5px;
+			padding: 10px;
+			text-align: left;
+            box-sizing: border-box;
+
+
+			}
+
+			.four_arrow{
+			height: 50px
+
+			}
+
+
+
+
+
+
+			.lowerarrow{
+			height: 50px;
+
+			}
+
+        </style>
 	</head>
 
     <body>
@@ -36,7 +146,45 @@
 			<br>
             <br>
 
+
+
+
+
+
              <div>
+
+
+
+
+
+
+
+			 <div class="branchname">
+				 <div class="firstbranch">
+
+				 </div>
+				 <div class="secondbranch">
+
+				 </div>
+			 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<div class="row">
+
+
+
 			<div style="width: 45%; background-color: #daf3f5; margin: 0 auto; border: 2px dashed #000; border-radius: 15px; padding: 10px; text-align: left;
 box-sizing: border-box; ">
 
@@ -105,7 +253,10 @@ box-sizing: border-box; ">
 
 
 			</div>
-				 <br>
+
+
+
+
 			<div style="width: 45%; background-color: #daf3f5; margin: 0 auto; border: 2px dashed #000; border-radius: 15px; padding: 10px; text-align: left;
 box-sizing: border-box; ">
 
@@ -157,7 +308,108 @@ box-sizing: border-box; ">
 
 
 				</div>
+
+
+				</div>
+
+
+
+
+			<div class="four_arrow">
+				<div class="firstarrow">
+
+				</div>
+
+				<div class="secondarrow">
+
+
+				</div>
+
+				<div class="thirdarrow">
+
+
+				</div>
+
+				<div class="fourarrow">
+
+				</div>
 			</div>
+
+				 <div class="lastlayer">
+					 <div class="first_b_final">
+                          {% if first_branch_final==1 %}
+				       <h3>The result of First Branch CNN+SVM Final hybrid model is: <span class='danger'>Disease Found</span></h3>
+
+		               	{% elif first_branch_final==0 %}
+			        	<h3>The result of First Branch CNN+SVM Final hybrid model is: <span class='safe'>Disease not Found</span></h3>
+
+		            	{% endif %}
+					 </div>
+
+					 <div class="both_b_final">
+                         {% if both_branch_final==1 %}
+			           	<h3>The result of Both Branch Final model is: <span class='danger'>Disease Found</span></h3>
+
+		             	{% elif both_branch_final==0 %}
+		        		<h3>The result of Both Branch Final model is: <span class='safe'>Disease not Found</span></h3>
+
+		            	{% endif %}
+					 </div>
+
+					 <div class="second_b_final">
+                       {% if second_branch_final==1 %}
+				      <h3>The result of Second Branch Final model is: <span class='danger'>Disease Found</span></h3>
+
+		   	          {% elif second_branch_final==0 %}
+			        	<h3>The result of Second Branch Final model is: <span class='safe'>Disease not Found</span></h3>
+
+		            	{% endif %}
+					 </div>
+
+
+
+				 </div>
+
+
+                 <div class="lowerarrow">
+					 <div class="leftarrow">
+
+					 </div>
+
+					 <div class="middlearrow">
+
+					 </div>
+
+					 <div class="rightarrow">
+
+
+					 </div>
+				 </div>
+
+				 <div class = "bod">
+			 <div class="datarow">
+				 <span class="text">
+					  {% if prediction==1 %}
+				      <h2>Final model Result is: <span class='danger'>DISEASE FOUND</span></h2>
+
+		   	          {% elif prediction==0 %}
+			        	<h2>Final model Result is: <span class='safe'>DISEASE NOT FOUND</span></h2>
+
+		            	{% endif %}
+				 </span>
+			 </div>
+					 </div>
+
+
+            <div style="height:50px">
+
+			</div>
+
+
+
+
+
+			 </div>
 			<br>
 
 		</div>

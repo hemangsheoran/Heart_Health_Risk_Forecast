@@ -3,18 +3,9 @@ import numpy as np
 import lightgbm as lgb
 from catboost import CatBoostClassifier
 import pickle
-from tensorflow.keras.layers import LSTM
-import xgboost as xgb
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 import matplotlib.pyplot as plt
 import seaborn as sns
-from tensorflow.keras.optimizers import SGD
-from sklearn.model_selection import train_test_split
-from joblib import dump
-from sklearn.svm import SVC
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
 import joblib
 from sklearn.metrics import accuracy_score
 from tensorflow.keras.models import load_model
@@ -441,6 +432,21 @@ final_result_after_all_model = Final_last_cnn_5_layer_model.predict(test_final_c
 
 final_result_binary = np.where(final_result_after_all_model >= 0.5, 1, 0)
 final_result_binary = final_result_binary.flatten()
+
+
+
+
+# for i in range(len(test_final_combined)):
+#     votes_1 = test_final_combined[i][0]+test_final_combined[i][1]+test_final_combined[i][2]
+#     votes_0 = 3 - votes_1
+#     if votes_1 >= 2 and final_result_binary[i] == 0:
+#         final_result_binary[i] = 1
+#     if votes_0 >= 2 and final_result_binary[i] == 1:
+#         final_result_binary[i] = 0
+
+
+
+
 
 accuracy = accuracy_score(y_test, final_result_binary)
 print("Final Accuracy:", accuracy)

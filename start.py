@@ -3,10 +3,7 @@ import pandas as pd
 import joblib
 import lightgbm as lgb
 from catboost import CatBoostClassifier
-
 import pickle
-
-
 from flask import Flask, render_template, request
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -42,6 +39,7 @@ xgmodel.load_model('xgboost_model.json')
 logistic_model = joblib.load('logistic_regression_model.pkl')
 
 
+
 # Branch 2
 #first hybrid
 loaded_rf_1_1 = joblib.load('random_forest_1_1.pkl')
@@ -65,6 +63,35 @@ catboost_lightgbm_loaded.load_model('catboost_lightgbm')
 #lightgbm_naivebyes
 with open("naive_bayes_lightGBM.pkl", "rb") as f:
     loaded_naive = pickle.load(f)
+
+
+# Second Branch Final Model
+second_branch_final_cnn_model = load_model('second_branch_final_cnn_model.keras')
+
+
+# Both Branch Final Model
+both_branch_final_model = joblib.load('both_branch_final_logistic_model.pkl')
+
+
+
+# Final Model
+Final_last_cnn_5_layer_model = load_model('Final_last_CNN_5_LAYER_model.keras')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app = Flask(__name__)
@@ -122,47 +149,67 @@ def predict():
         #print(pd1data)
         #print(x_test)
         user_input_scaled = scaler.fit_transform(x_test)
-        print(user_input_scaled[150])
-        svm_model_test_predictions = []
+        print("User Input Provided", user_input_scaled[150])
+        first_branch_final_test_predictions = []
+        second_branch_final_test_predictions = []
+        both_branch_final_test_predictions = []
+        final_layer_predictions = []
+
+
         start_2_layer = cnn_2_layer.predict(user_input_scaled)
         result_2_layer = svm_2_layer.predict(start_2_layer)
-        print(result_2_layer[150])
-        svm_model_test_predictions.append([result_2_layer[150]])
+        first_branch_final_test_predictions.append([result_2_layer[150]])
+        both_branch_final_test_predictions.append([result_2_layer[150]])
+
 
         start_4_layer = cnn_4_layer.predict(user_input_scaled)
         result_4_layer = svm_4_layer.predict(start_4_layer)
-        print(result_4_layer[150])
-        svm_model_test_predictions.append([result_4_layer[150]])
+
+        first_branch_final_test_predictions.append([result_4_layer[150]])
+        both_branch_final_test_predictions.append([result_4_layer[150]])
+
+
         start_8_layer = cnn_8_layer.predict(user_input_scaled)
         result_8_layer = svm_8_layer.predict(start_8_layer)
-        print(result_8_layer[150])
-        svm_model_test_predictions.append([result_8_layer[150]])
+
+        first_branch_final_test_predictions.append([result_8_layer[150]])
+        both_branch_final_test_predictions.append([result_8_layer[150]])
+
 
         start_16_layer = cnn_16_layer.predict(user_input_scaled)
         result_16_layer = svm_16_layer.predict(start_16_layer)
-        print(result_16_layer[150])
-        svm_model_test_predictions.append([result_16_layer[150]])
+
+        first_branch_final_test_predictions.append([result_16_layer[150]])
+        both_branch_final_test_predictions.append([result_16_layer[150]])
+
 
         start_24_layer = cnn_24_layer.predict(user_input_scaled)
         result_24_layer = svm_24_layer.predict(start_24_layer)
-        print(result_24_layer[150])
-        svm_model_test_predictions.append([result_24_layer[150]])
+
+        first_branch_final_test_predictions.append([result_24_layer[150]])
+        both_branch_final_test_predictions.append([result_24_layer[150]])
+
 
         y_pred = xgmodel.predict(pd1data)
-        print(y_pred)
 
-        svm_model_test_predictions.append(y_pred)
+        first_branch_final_test_predictions.append(y_pred)
+        both_branch_final_test_predictions.append(y_pred)
+
+
         predictions_logistic = logistic_model.predict(pd1data)
-        print(predictions_logistic)
-        svm_model_test_predictions.append(predictions_logistic)
+
+        first_branch_final_test_predictions.append(predictions_logistic)
+        both_branch_final_test_predictions.append(predictions_logistic)
 
         #svm_model_test_predictions = [[result_2_layer[150],result_4_layer[150],result_8_layer[150],result_16_layer[150],result_24_layer[150],y_pred[0],predictions_logistic[0]]]
-        print(svm_model_test_predictions)
-        combined_outputs_test = np.array(svm_model_test_predictions).T
-        print(combined_outputs_test)
-        cnn_predictions_test = cnn_final.predict(combined_outputs_test)
+        print("First branch final Result sheet", first_branch_final_test_predictions)
+        first_branch_combined_outputs_test = np.array(first_branch_final_test_predictions).T
+        print(first_branch_combined_outputs_test)
+        cnn_predictions_test = cnn_final.predict(first_branch_combined_outputs_test)
         final_result = svm_final.predict(cnn_predictions_test)
-        print(final_result[0])
+
+        final_layer_predictions.append([final_result[0]])
+
 
 
 
@@ -172,30 +219,38 @@ def predict():
         #Second Branch
 
         # Load Logistic Regression model
-        print(x_test)
+        print("x_test Full input rows", x_test)
         predictions = loaded_rf_1_1.predict(x_test)
         x_test1 = x_test.copy()
         x_test1['rf_predictions'] = predictions
         lr_predictions_first = loaded_lr_1_2.predict(x_test1)
+        second_branch_final_test_predictions.append([lr_predictions_first[150]])
+        both_branch_final_test_predictions.append([lr_predictions_first[150]])
 
 
         #second
-        print(x_test)
+
         predictions1 = loaded_dt_2_1.predict(x_test)
         x_test2 = x_test.copy()
         x_test2['second_predictions'] = predictions1
         predictions_second = loaded_lr_2_2.predict(x_test2)
+        second_branch_final_test_predictions.append([predictions_second[150]])
+        both_branch_final_test_predictions.append([predictions_second[150]])
 
 
 
         #cnn_logistic_regression
         cnn_logistic1 = cnn_logistic.predict(user_input_scaled)
         predictions_cnn_logistic = loaded_cnn_lr.predict(cnn_logistic1)
+        second_branch_final_test_predictions.append([predictions_cnn_logistic[150]])
+        both_branch_final_test_predictions.append([predictions_cnn_logistic[150]])
 
         # Lightgbm_catboost
         y_preds = lightgbm_catboost_loaded.predict(x_test_lightgbm, num_iteration=lightgbm_catboost_loaded.best_iteration)
         cattest1 = pd.DataFrame({'Lightgbm': y_preds})
         y_predset = catboost_lightgbm_loaded.predict(cattest1)
+        second_branch_final_test_predictions.append([y_predset[150]])
+        both_branch_final_test_predictions.append([y_predset[150]])
 
 
 
@@ -203,12 +258,69 @@ def predict():
         y_predst = lightgbm_catboost_loaded.predict(x_test_lightgbm, num_iteration=lightgbm_catboost_loaded.best_iteration)
         cattest2 = pd.DataFrame({'Lightgbm': y_predst})
         naive_result = loaded_naive.predict(cattest2)
+        second_branch_final_test_predictions.append([naive_result[150]])
+        both_branch_final_test_predictions.append([naive_result[150]])
 
-        final = result_2_layer[150] + result_4_layer[150] + result_8_layer[150] + result_16_layer[150] + result_24_layer[150] + y_pred[0] + predictions_logistic[0]
+
+        print("Second Branch all result array", second_branch_final_test_predictions)
+        print("Both branch full sheet of Result", both_branch_final_test_predictions)
 
 
 
-        accuracy = (final / 7) * 100
+        #Second Branch Final Model
+        train_second_branch_array_combined = np.array(second_branch_final_test_predictions).T
+
+        train_second_branch_result = second_branch_final_cnn_model.predict(train_second_branch_array_combined)
+
+        train_final_result_binary = np.where(train_second_branch_result >= 0.5, 1, 0)
+        train_final_result_binary = train_final_result_binary.flatten()
+        final_layer_predictions.append(train_final_result_binary)
+
+
+
+
+
+
+        #both branch final model
+
+
+        train_both_branch_array_combined = np.array(both_branch_final_test_predictions).T
+        train_both_branch_result = both_branch_final_model.predict(train_both_branch_array_combined)
+        votesss_1 = train_both_branch_array_combined[0][1]+train_both_branch_array_combined[0][2]+train_both_branch_array_combined[0][3]+train_both_branch_array_combined[0][4]+train_both_branch_array_combined[0][5]+train_both_branch_array_combined[0][6]+train_both_branch_array_combined[0][7]+train_both_branch_array_combined[0][8]+train_both_branch_array_combined[0][9]+train_both_branch_array_combined[0][10]+train_both_branch_array_combined[0][11]+train_both_branch_array_combined[0][0]
+        votesss_0 = 12 - votesss_1
+        if votesss_1 >= 7 and train_both_branch_result[0] == 0:
+            train_both_branch_result[0] = 1
+        if votesss_0 >= 7 and train_both_branch_result[0] == 1:
+            train_both_branch_result[0] = 0;
+        final_layer_predictions.append(train_both_branch_result)
+        print("Final layer of both branch" , final_layer_predictions)
+
+
+
+        # Final Model
+        train_final_combined = np.array(final_layer_predictions).T
+
+
+        final_result_after_all_model = Final_last_cnn_5_layer_model.predict(train_final_combined)
+
+        final_result_binary = np.where(final_result_after_all_model >= 0.5, 1, 0)
+        final_result_binary = final_result_binary.flatten()
+        votes_1 = train_final_combined[0][0]+train_final_combined[0][1]+train_final_combined[0][2]
+        votes_0 = 3 - votes_1
+        if votes_1 >= 2 and final_result_binary[0] == 0:
+            final_result_binary[0] = 1
+        if votes_0 >= 2 and final_result_binary[0] == 1:
+            final_result_binary[0] = 0
+        print(final_result_binary)
+
+
+
+
+
+
+        final = result_2_layer[150] + result_4_layer[150] + result_8_layer[150] + result_16_layer[150] + result_24_layer[150] + y_pred[0] + predictions_logistic[0]+lr_predictions_first[150]+predictions_second[150]+predictions_cnn_logistic[150]+y_predset[150]+naive_result[150]
+
+        accuracy = (final / 12) * 100
 
 
         print("First Branch----------")
@@ -219,6 +331,7 @@ def predict():
         print("Layer 24 result", result_24_layer[150])
         print("Xgboost result", y_pred[0])
         print("Logistic Regression result", predictions_logistic[0])
+        print("First Branch Final Result", final_result)
 
 
         print("Second Branch---------")
@@ -228,12 +341,20 @@ def predict():
         print("CNN + Logistic Regression", predictions_cnn_logistic[150])
         print("LightGBM + Catboost", y_predset[150])
         print("LightGBM + Naive_bayes", naive_result[150])
-        
+
+
+        print("Second Branch Final Result", train_final_result_binary)
+        print(">>>>>>>>>>>>")
+        print("Both Branch Final Result", train_both_branch_result)
+
+
+
+        print("Final Output:", final_result_binary)
 
 
 
 
-        return render_template('result.html', prediction=final_result[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150], cnn_logisticregr = predictions_cnn_logistic[150], lightgbm_catboo = y_predset[150], naive_bayes = naive_result[150] )
+        return render_template('result.html', prediction=final_result_binary[0], accurate=accuracy, layer_2=result_2_layer[150], layer_4=result_4_layer[150], layer_8=result_8_layer[150], layer_16=result_16_layer[150], layer_24=result_24_layer[150], xgboost = y_pred[0], logistic = predictions_logistic[0], second_first = lr_predictions_first[150], second_second = predictions_second[150], cnn_logisticregr = predictions_cnn_logistic[150], lightgbm_catboo = y_predset[150], naive_bayes = naive_result[150],first_branch_final =final_result[0], second_branch_final = train_final_result_binary[0], both_branch_final = train_both_branch_result[0] )
 
 
 if __name__ == '__main__':
