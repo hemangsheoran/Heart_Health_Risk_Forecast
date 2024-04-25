@@ -12,6 +12,23 @@
 
 		<style>
 
+			.designed-box {
+                width: 20%;
+                background: linear-gradient(45deg, #ffcc00, #ff3300); /* Reddish-yellow gradient */
+               border: 2px solid #ff6600; /* Border color */
+               border-radius: 10px; /* Border radius */
+    display: inline-block;
+    padding: 10px;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center; /* Vertically center the content */
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff; /* Text color */
+    text-transform: uppercase;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Box shadow */
+}
+
+
 			.bod {
                 display: flex;
                  justify-content: center; /* Horizontally center the content */
@@ -38,7 +55,7 @@
 
 
                 color: #333;
-                  text-transform: uppercase;
+
                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
 			}
@@ -47,21 +64,7 @@
                text-align: center;
                       }
 
-			.branchname{
 
-
-
-			}
-			.firstbranch{
-
-
-
-			}
-			.secondbranch{
-
-
-
-			}
 
             .row {
                display: flex;
@@ -118,6 +121,8 @@
 
 			}
 
+}
+
         </style>
 	</head>
 
@@ -136,13 +141,13 @@
 		<div class="results">
 			{% if prediction==1 %}
 				<h1>Final Prediction: <span class='danger'>Warning!! You have Chances of Heart Disease.</span></h1>
-				
+
 			{% elif prediction==0 %}
 				<h1>Final Prediction: <span class='safe'>Congratulations! You don't have chances of Heart Disease.</span></h1>
-				
+
 			{% endif %}
             <br>
-			<h2>Chances of Heart Disease: <span style="color: #00e5ff;">{{accurate}} %</span></h2>
+			<h2 class="datarow">Chances of Heart Disease: <span style="color: #00e5ff;">{{accurate}} %</span></h2>
 			<br>
             <br>
 
@@ -153,20 +158,25 @@
 
              <div>
 
+              <div class="designed-box">
+              <span class="text">Input Data</span>
+                 </div>
 
-
-
-
-
-
-			 <div class="branchname">
-				 <div class="firstbranch">
-
-				 </div>
-				 <div class="secondbranch">
-
-				 </div>
+             <div style="height: 85px; width: 100%; display: flex; box-sizing: border-box; justify-content: space-evenly;">
+				<div style="position: relative; top: 28px; height: 28px;	width: 20%; padding: 10px; background-color: #f0f0f0;border: 2px solid #ccc; border-radius: 5px; justify-content: centre;">
+				 <p style="font-size: 20px; font-weight: bold; margin: 0;">FIRST BRANCH</p>
+					</div>
+				 <span style='position: relative; bottom: 15px;font-size:100px; width:10%; justify-content: centre'>&#8601;</span>
+				 <span style='position: relative; bottom: 15px;font-size:100px; width:10%; justify-content: centre'>&#8600;</span>
+				 <div style="position: relative; top: 28px; height: 28px;	width: 20%; padding: 10px; background-color: #f0f0f0;border: 2px solid #ccc; border-radius: 5px; justify-content: centre;">
+				 <p style="font-size: 20px; font-weight: bold; margin: 0;">SECOND BRANCH</p>
+					 </div>
 			 </div>
+
+
+
+
+
 
 
 
@@ -315,25 +325,17 @@ box-sizing: border-box; ">
 
 
 
-			<div class="four_arrow">
-				<div class="firstarrow">
+			<div style="height: 85px; width: 100%; display: flex; justify-content: space-evenly; box-sizing: border-box;">
+				<span style='position: relative; top: -15px; width: 20%; font-size:80px;'>&#8595;</span>
 
-				</div>
+				<span style='position: relative; top: -15px; width: 20%; font-size:100px;'>&#8600;</span>
 
-				<div class="secondarrow">
+				<span style='position: relative; top: -15px; width: 20%; font-size:100px;'>&#8601;</span>
 
-
-				</div>
-
-				<div class="thirdarrow">
-
-
-				</div>
-
-				<div class="fourarrow">
-
-				</div>
+				<span style='position: relative; top: -15px; width: 20%; font-size:80px;'>&#8595;</span>
 			</div>
+
+
 
 				 <div class="lastlayer">
 					 <div class="first_b_final">
@@ -371,20 +373,15 @@ box-sizing: border-box; ">
 				 </div>
 
 
-                 <div class="lowerarrow">
-					 <div class="leftarrow">
+                <div style="height: 85px; width: 100%; display: flex; justify-content: center; box-sizing: border-box;">
+				<span style='position: relative; top: -15px; width: 20%; font-size:100px;'>&#8600;</span>
 
-					 </div>
+				<span style='position: relative; top: -15px; width: 20%; font-size:80px;'>&#8595;</span>
 
-					 <div class="middlearrow">
-
-					 </div>
-
-					 <div class="rightarrow">
+				<span style='position: relative; top: -15px; width: 20%; font-size:100px;'>&#8601;</span>
+			</div>
 
 
-					 </div>
-				 </div>
 
 				 <div class = "bod">
 			 <div class="datarow">
